@@ -15,31 +15,33 @@ public class Task5 {
         long x0 = sc.nextLong();
         System.out.print("Введите сколько чисел требуется получить: ");
         int count = sc.nextInt();
-        func(x0, count);
+        generate(x0, count);
         sc.close();
     }
 
 //Основная функция по генерации чисел (Обратная линейная конгруэнтная последовательность):
-    public static void func(long x0, int count) {
-
+    public static List<Long> generate(long firstElement, int count) {
+        List<Long> result = new ArrayList<>();
         long a = LKG(0);
         c = LKG(1);
 
-        System.out.print("\nSequence of numbers: "+x0+", ");
+        //System.out.print("\nSequence of numbers: "+x0+", ");
 
         for (int i = 0; i < count; i++) {
-            if(x0==0) {
-                x0=c;
+            if(firstElement==0) {
+                firstElement=c;
             }
             else {
-                long res[] = inv(x0,p);
-                x0 = (a * res[1] + c) % p;
-                if (i % 30 == 0 && i != 0) System.out.println("\n");
-                System.out.print(x0 + ", ");
+                long res[] = inv(firstElement,p);
+                firstElement = (a * res[1] + c) % p;
+                //if (i % 30 == 0 && i != 0) {} System.out.println("\n");
+                result.add(firstElement);
+                //System.out.print(x0 + ", ");
             }
 
         }
-        System.err.print("end of sequence.\n");
+        //System.err.print("end of sequence.\n");
+        return result;
     }
 
     //Нахождение обратного к элементу "а" по модулю "m":

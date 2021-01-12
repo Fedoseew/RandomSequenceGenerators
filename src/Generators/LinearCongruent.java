@@ -2,7 +2,7 @@ package Generators;
 
 import java.util.*;
 
-public class Generator {
+public class LinearCongruent {
     double m = Math.pow(2,35);
     //double a = 3141592621d;
     //double b = a+1;
@@ -14,18 +14,15 @@ public class Generator {
     ArrayList<Double> array = new ArrayList<>();
 
     public static void main(String[] arr) {
-        Generator generator = new Generator();
-        generator.createArray();
-        for (Double element : generator.array) System.out.println(element); //вывод последовательности
-        System.out.print("Для a = " + generator.a + "и m = " + generator.m);
-        System.out.print(" потенциал s = " + generator.potential());
+        LinearCongruent linearCongruent = new LinearCongruent();
+        linearCongruent.generate(20);
+        for (Double element : linearCongruent.array) System.out.println(element); //вывод последовательности
+        System.out.print("Для a = " + linearCongruent.a + "и m = " + linearCongruent.m);
+        System.out.print(" потенциал s = " + linearCongruent.potential());
     }
     //создаем последовательность по формуле
-    public void createArray() {
-        Scanner sc =  new Scanner(System.in);
-        System.out.println("Введите колличество элементов в последовательности ");
-        int n = sc.nextInt();
-        for (int i = 0; i < n; i++) {
+    public void generate(int count) {
+        for (int i = 0; i < count; i++) {
             double x = x0;
             double res = ((a * x) + c) % m;
             x0 = res;

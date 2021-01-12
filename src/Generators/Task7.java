@@ -4,14 +4,14 @@ import java.util.Calendar;
 import java.util.Date;
 
 
-public class VII {
+public class Task7 {
     public static int[] generate(int count) throws InterruptedException {
 
         int[] array = new int[count]; //создаем массив размерностью 13
 
         //заполняем массив рандомными числами и выводим его на консоль
         //System.out.println("\n\nИсходный массив чисел: ");
-        for(int i = 0; i< count; i++) {
+        for (int i = 0; i < count; i++) {
 
             array[i] = i;
 
@@ -25,13 +25,13 @@ public class VII {
         //System.out.println("\n\nПолучившийся рандомный массив чисел: ");
 
         //цикл по перемешиванию элементов
-        for(int i = 0; i< count; i++) {
+        for (int i = 0; i < count; i++) {
             //генерируем два рандомных индекса массива
-            int ind1 = random()% count;
-            int ind2 = ind1*random()% count;
+            int ind1 = random() % count;
+            int ind2 = ind1 * random() % count;
             int temp = array[ind1];
             array[ind1] = array[ind2];
-            array[ind2]=temp;
+            array[ind2] = temp;
         }
         //выводим получившийся перемешанный массив на консоль для сравнения
         /*for(int i=0; i<z; i++){
@@ -43,10 +43,10 @@ public class VII {
         return array;
     }
 
-//Линейный конгруэнтный генератор:
+    //Линейный конгруэнтный генератор:
     public static int random() throws InterruptedException {
         int randomNumber = 0;
-        Calendar clnd= Calendar.getInstance();
+        Calendar clnd = Calendar.getInstance();
         clnd.setTime(new Date());
         int c = clnd.get(Calendar.MILLISECOND);
         Thread.sleep(7);

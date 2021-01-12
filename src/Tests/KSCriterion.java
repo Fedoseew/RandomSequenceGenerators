@@ -6,18 +6,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class KStest {
+public class KSCriterion {
 
     public static void main(String[] args) {
-        ArrayList<Integer> array = (ArrayList<Integer>) Task2.generate(90, 45577);
-        array.sort(Integer::compareTo);
+        ArrayList<Long> array = (ArrayList<Long>) Task2.generate(90, 45577);
+        array.sort(Long::compareTo);
         ArrayList<Double> newArray = new ArrayList<>();
         double scale = Math.pow(10, 3);
         double maxP = 0;
         double maxM = 0;
 
-        for (Integer integer : array)
-            newArray.add(Double.parseDouble(String.valueOf(Math.ceil(((double) integer / 100000) * scale) / scale)));
+        for (Long x : array)
+            newArray.add(Double.parseDouble(String.valueOf(Math.ceil(((double) x / 100000) * scale) / scale)));
 
         System.out.println(Arrays.toString(newArray.toArray()));
 

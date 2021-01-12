@@ -5,19 +5,19 @@ import java.util.List;
 
 
 public class Task2 {
-    public static List<Integer> generate(int count, int firstelement) {
+    public static List<Long> generate(int count, int firstElement) {
 
         List<String> arr = new ArrayList<>();
-        List<Integer> resultArray = new ArrayList<>();
+        List<Long> resultArray = new ArrayList<>();
 
-        int x = firstelement;
-        StringBuilder result = null;
+        int x = firstElement;
+        StringBuilder result;
         for (int k = 0; k < count; k++) {
             arr.clear();
-            long pow = 0;
-            String l = "";
+            long pow;
+            String l;
             String tmp = Integer.toString(x);
-            int length = 0;
+            int length;
             result = new StringBuilder();
 
             if (tmp.length() < 5) x *= 17654;
@@ -31,7 +31,7 @@ public class Task2 {
 
             for (String s : arr)
                 result.append(s);
-            resultArray.add(Integer.parseInt(result.toString()));
+            resultArray.add(Long.parseLong(result.toString()));
 
             x = Integer.parseInt(result.toString());
 
