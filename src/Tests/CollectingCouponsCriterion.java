@@ -1,5 +1,6 @@
 package Tests;
 
+import Generators.LinearCongruent;
 import Generators.Task2;
 import Generators.Task5;
 
@@ -11,7 +12,8 @@ public class CollectingCouponsCriterion {
 
     public static void main(String[] args) {
 
-        List<Long> array = Task2.generate(1000, 4424);
+        List<Long> array = LinearCongruent.generate(1000);
+        System.out.println(array);
         List<Integer> countOfLengths = new ArrayList<>();
 
         for (int i = 0; i < array.size(); i++)
@@ -37,7 +39,7 @@ public class CollectingCouponsCriterion {
                 .collect(Collectors.toList());
         List<Map.Entry<Integer, Long>> rs = countOfLengths.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet().stream().filter(e->e.getValue()>1).collect(Collectors.toList());
-        System.out.println(rs);
+        System.out.println("\nСколько раз встретилась длина: " + rs);
 
         double[] Ps = new double[maxLength];
 
