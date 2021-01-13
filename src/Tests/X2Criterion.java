@@ -40,9 +40,13 @@ public class X2Criterion {
 
     public static void forCollectingCouponsCriterion(List<Map.Entry<Integer, Long>> array, int d, double[] Ps) {
         double result = 0.0;
-        for (int i = 5; i < array.size(); i++) {
-            result += Math.pow(array.get(i).getValue() - Ps[array.get(i).getKey()], 2) / Ps[array.get(i).getKey()];
+        int summ = 0;
+        for(Map.Entry<Integer, Long> entry: array) {
+            summ+=entry.getValue();
         }
-        System.out.println("Для v = " + (d-1) + " получилось: " + result);
+        for (int i = 5; i < array.size(); i++) {
+            result += Math.pow((array.get(i).getValue() - (Ps[array.get(i).getKey()]*summ)), 2) / (Ps[array.get(i).getKey()]*summ);
+        }
+        System.out.println("\nДля v = " + (d-1) + " получилось: " + result);
     }
 }
