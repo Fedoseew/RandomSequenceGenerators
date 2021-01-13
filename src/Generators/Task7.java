@@ -1,11 +1,13 @@
 package Generators;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 public class Task7 {
-    public static int[] generate(int count) throws InterruptedException {
+    public static List<Long> generate(int count) throws InterruptedException {
 
         int[] array = new int[count]; //создаем массив размерностью 13
 
@@ -40,7 +42,9 @@ public class Task7 {
             else
                 System.out.print(array[i]+", ");
         }*/
-        return array;
+        List<Long> finalArray = new ArrayList<>();
+        for(int i: array) finalArray.add((long)i);
+        return finalArray;
     }
 
     //Линейный конгруэнтный генератор:
@@ -49,9 +53,9 @@ public class Task7 {
         Calendar clnd = Calendar.getInstance();
         clnd.setTime(new Date());
         int c = clnd.get(Calendar.MILLISECOND);
-        Thread.sleep(7);
-        int a = clnd.get(Calendar.MILLISECOND);
         Thread.sleep(3);
+        int a = clnd.get(Calendar.MILLISECOND);
+        Thread.sleep(2);
         int x = clnd.get(Calendar.MILLISECOND);
         int m = (int) Math.pow(2, 15);
         randomNumber = (a * x + c) % m;

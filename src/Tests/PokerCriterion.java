@@ -1,25 +1,31 @@
 package Tests;
 
+import Generators.LinearCongruent;
 import Generators.Task2;
+import Generators.Task5;
+import Generators.Task7;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PokerCriterion {
     public static void main(String[] args) {
 
-        List<Long> array = Task2.generate(1300, 4577);
+        List<Long> array = Task2.generate(1000, 17355);
         List<Long> block = new ArrayList<>();
         List<List<Long>> blocks = new ArrayList<>();
         int[] counter = {0,0,0,0,0};
-        int d = 5;
+        int d = 10;
+        int R = 5;
+
 
         int tmpCounter = 1;
         for (Long x : array) {
             block.add(x%d);
-            if (tmpCounter % d == 0) {
+            if (tmpCounter % R == 0) {
                 blocks.add(List.copyOf(block));
                 block.clear();
                 tmpCounter = 1;
@@ -53,15 +59,29 @@ public class PokerCriterion {
                 case 1 -> counter[0]++;
             }
         }
-        System.out.println("\nИсходный массив: " + Arrays.toString(array.toArray())+"\n");
-        System.out.println("Преобразованный массив блоков длины 5: " + Arrays.toString(blocks.toArray())+"\n");
-        System.out.println("Подсчёт количества различных элементов: " + Arrays.toString(counter)+"\n");
+        System.out.println("\nИсходный массив: " + Arrays.toString(array.toArray()));
+        System.out.println("\nМассив блоков длины 5 (mod " + d + "): " + Arrays.toString(blocks.toArray()));
+        System.out.println("\nПодсчёт количества различных элементов: " + Arrays.toString(counter));
 
-        double P1 = factorial(d)/Math.pow(d, 5);
-    }
-    public static int factorial(int d) {
-        for(int i=1; i<d; i++)
-            d*=i;
-        return d;
+        double[] Ps = new double[6];
+        Ps[0]=0;
+
+        for(int r = 1; r<6; r++) {
+            int chisltel = d*(d-1);
+                for (int k = 2; k < r + 2; k++) {
+                    if(d-k > d-r+1) {
+                        chisltel *= (d - k);
+                    }
+                    else {
+                        chisltel *= (d - r + 1);
+                        break;
+                    }
+                }
+            Ps[r] = chisltel*StirlingNumbers.func(5,r)/Math.pow(d,5);
+        }
+        System.out.println("\nВероятности: " + Arrays.toString(Ps));
+        List<Integer> finalArray = new ArrayList<>();
+        for (int j : counter) finalArray.add(j);
+        X2Criterion.forPokerCriterion(finalArray, d, Ps);
     }
 }
