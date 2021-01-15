@@ -12,7 +12,7 @@ public class X2Criterion {
     public static void main(String[] args) {
         int d = 7;
         int[] map = new int[d];
-        List<Long> array = Task2.generate(120, 4577);
+        List<Long> array = Task2.generate(120);
         long[] newArray = new long[array.size()];
 
         for (int i = 0; i < newArray.length; i++) newArray[i] = array.get(i) % d;
