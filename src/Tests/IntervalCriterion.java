@@ -13,7 +13,7 @@ import static java.util.stream.Collectors.groupingBy;
 public class IntervalCriterion {
 
     public static void main(String[] args) {
-        List<Long> randomSequence = new ArrayList<>(Task5.generate(1523, 5000));
+        List<Long> randomSequence = new ArrayList<>(Task5.generate(1523));
         List<Long> intervals = new ArrayList<>();
         Collections.sort(randomSequence);
 

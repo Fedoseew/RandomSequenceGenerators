@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class PokerCriterion {
     public static void main(String[] args) {
 
-        List<Long> array = Task2.generate(1000, 17355);
+        List<Long> array = Task2.generate(1000);
         List<Long> block = new ArrayList<>();
         List<List<Long>> blocks = new ArrayList<>();
         int[] counter = {0,0,0,0,0};

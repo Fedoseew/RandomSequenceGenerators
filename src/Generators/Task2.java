@@ -5,13 +5,13 @@ import java.util.List;
 
 
 public class Task2 {
-    public static List<Long> generate(int count, int firstElement) {
+    public static List<Long> generate(int count) {
 
         List<String> arr = new ArrayList<>();
         List<Long> resultArray = new ArrayList<>();
-
-        int x = firstElement;
+        int x = (int) (Math.random() * 1000);
         StringBuilder result;
+
         for (int k = 0; k < count; k++) {
             arr.clear();
             long pow;
