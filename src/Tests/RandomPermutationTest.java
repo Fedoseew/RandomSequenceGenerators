@@ -94,8 +94,8 @@ public class RandomPermutationTest {
     public int calculateF(List<Long> block) {
         int f = 0;
         for (int r = block.size(); r > 1; r--) {
-            int max = getMaximumFromBlock(block, r);
-            int s = block.indexOf((long) max) + 1;
+            long max = getMaximumFromBlock(block, r);
+            int s = block.indexOf(max) + 1;
             f = f * r + s - 1;
             swapTwoElements(block, s, r);
         }
@@ -103,14 +103,14 @@ public class RandomPermutationTest {
     }
 
     // Поиск максимального элемента в переданном блоке до указанного индекса
-    public int getMaximumFromBlock(List<Long> block, int beforeThisIndex) {
+    public long getMaximumFromBlock(List<Long> block, int beforeThisIndex) {
         long max = block.get(0);
         for (long i = 0; i < beforeThisIndex; i++) {
             if (block.get((int) i) > max) {
                 max = block.get((int) i);
             }
         }
-        return (int) max;
+        return max;
     }
 
     // Перестановка двух элементов в блоке местами
