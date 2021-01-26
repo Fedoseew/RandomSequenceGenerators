@@ -4,17 +4,17 @@ Author: Kozikov Dmitriy
 
 package Tests;
 
-import Generators.Task2;
+import Generators.ConstantRecursiveSequence;
+import Generators.DropTheMembersOfSequence;
+import Generators.MixingSequence;
 import org.apache.commons.collections4.ListUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class RandomPermutationTest {
 
-    public static List<Long> sequence = Task2.generate(100);
+    public static List<Long> sequence = DropTheMembersOfSequence.generateSequence(
+            MixingSequence.mixSequence(ConstantRecursiveSequence.generateSequence().subList(0, 30000)));
     public static int blocksSize = 3;
 
     public static void main(String[] args) {
@@ -25,15 +25,18 @@ public class RandomPermutationTest {
     public void startTest(List<Long> sequence, int blocksSize) {
         RandomPermutationTest randomPermutationTest = new RandomPermutationTest();
         System.out.println();
-        System.out.println("Первоначальная последовательность из 100 элементов:\n" + sequence + "\n");
+        System.out.println("Первоначальная последовательность из " + sequence.size() + " элементов:\n" + sequence + "\n");
         List<List<Long>> blocks = randomPermutationTest.generateBlocks(sequence, blocksSize);
-        System.out.println("После разделения на блоки по " + blocksSize + ":\n" + blocks + "\n");
-        System.out.println("После преобразования каждого блока к стандартной перестановке:\n" +
-                randomPermutationTest.getStandardPermutationsFromBlocks(blocks) + "\n");
-        System.out.println("После подсчёта всех функций f и их количества: ");
-        System.out.println(randomPermutationTest
-                .getMapWithFValuesAndCounts(randomPermutationTest
-                        .getStandardPermutationsFromBlocks(blocks), blocksSize));
+        blocks = deleteBlocksWithRepeat(blocks);
+        System.out.println("После разделения на блоки по " + blocksSize + " (всего " + blocks.size() + " блоков):\n" + blocks + "\n");
+        List<List<Long>> standardBlocks = randomPermutationTest.getStandardPermutationsFromBlocks(blocks);
+        System.out.println("После преобразования каждого блока к стандартной перестановке:\n" + standardBlocks + "\n");
+        System.out.println("Значения f для уникальных перестановок: " + getUniqPermutations(standardBlocks) + "\n");
+        HashMap<Long, Integer> mapWithFValuesAndCounts = randomPermutationTest.getMapWithFValuesAndCounts(standardBlocks, blocksSize);
+        System.out.println("После подсчёта количества всех значений f из последовательности: " + mapWithFValuesAndCounts + "\n");
+        ArrayList<Long> fValues = new ArrayList<>();
+        standardBlocks.forEach(e -> fValues.add((long) calculateF(e)));
+        System.out.println("Применяем хи квадрат критерий: " + X2Test.getValue(fValues));
     }
 
     // sequenceBeforeEditing - последовательность, которая будет разбиваться на блоки. blocksSize - длина блока
@@ -43,7 +46,7 @@ public class RandomPermutationTest {
 
     // Преобразование входного блока к стандартному порядковому виду, пример: {555, 777, 666} ~= {1, 3, 2}
     public List<Long> getPermutationType(List<Long> block) {
-        List<Long> sortedBlock = new ArrayList<Long>(block);
+        List<Long> sortedBlock = new ArrayList<>(block);
         Collections.sort(sortedBlock);
         List<Long> permutation = new ArrayList<>();
         for (long element : block) {
@@ -59,27 +62,12 @@ public class RandomPermutationTest {
         return resultList;
     }
 
-    // Подсчёт всех стандартных перестановок и их запись в Map
-    public HashMap<List<Long>, Integer> getMapWithPermutationsAndCounts(List<List<Long>> standardPermutations, int blocksSize) {
-        HashMap<List<Long>, Integer> resultMap = new HashMap<>();
-        standardPermutations.forEach(permutation -> {
-            if (permutation.size() == blocksSize) {
-                if (resultMap.containsKey(permutation)) {
-                    resultMap.put(permutation, resultMap.get(permutation) + 1);
-                } else {
-                    resultMap.put(permutation, 1);
-                }
-            }
-        });
-        return resultMap;
-    }
-
     // Подсчёт всех значений f от перестановки и их запись в Map
-    public HashMap<Integer, Integer> getMapWithFValuesAndCounts(List<List<Long>> standardPermutations, int blocksSize) {
-        HashMap<Integer, Integer> resultMap = new HashMap<>();
+    public HashMap<Long, Integer> getMapWithFValuesAndCounts(List<List<Long>> standardPermutations, int blocksSize) {
+        HashMap<Long, Integer> resultMap = new HashMap<>();
         standardPermutations.forEach(permutation -> {
             if (permutation.size() == blocksSize) {
-                int f = calculateF(permutation);
+                long f = calculateF(permutation);
                 if (resultMap.containsKey(f)) {
                     resultMap.put(f, resultMap.get(f) + 1);
                 } else {
@@ -92,12 +80,13 @@ public class RandomPermutationTest {
 
     // Подсчёт функции f
     public int calculateF(List<Long> block) {
+        List<Long> clone = new ArrayList<>(block);
         int f = 0;
-        for (int r = block.size(); r > 1; r--) {
-            long max = getMaximumFromBlock(block, r);
-            int s = block.indexOf(max) + 1;
+        for (int r = clone.size(); r > 1; r--) {
+            long max = getMaximumFromBlock(clone, r);
+            int s = clone.indexOf(max) + 1;
             f = f * r + s - 1;
-            swapTwoElements(block, s, r);
+            clone = swapTwoElements(clone, s, r);
         }
         return f;
     }
@@ -114,9 +103,28 @@ public class RandomPermutationTest {
     }
 
     // Перестановка двух элементов в блоке местами
-    public void swapTwoElements(List<Long> list, int i, int k) {
+    public List<Long> swapTwoElements(List<Long> list, int i, int k) {
         Long temp = list.get(i - 1);
         list.set(i - 1, list.get(k - 1));
         list.set(k - 1, temp);
+        return list;
+    }
+
+    public HashMap<List<Long>, Integer> getUniqPermutations(List<List<Long>> standardBlocks) {
+        HashMap<List<Long>, Integer> res = new HashMap<>();
+        HashSet<List<Long>> blocks = new HashSet<>(standardBlocks);
+        blocks.forEach(block -> res.put(block, calculateF(block)));
+        return res;
+    }
+
+    public List<List<Long>> deleteBlocksWithRepeat(List<List<Long>> blocks) {
+        List<List<Long>> res = new ArrayList<>();
+        blocks.forEach(block -> {
+            HashSet<Long> temp = new HashSet<>(block);
+            if (temp.size() == block.size()) {
+                res.add(block);
+            }
+        });
+        return res;
     }
 }
