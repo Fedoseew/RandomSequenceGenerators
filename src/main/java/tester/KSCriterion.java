@@ -4,13 +4,12 @@ import generator.Generator;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class KSCriterion implements Tester {
 
-    public static Pair<Double, Double> forAnyDoubleSequence(List<Double> array) {
+    public static Pair<String, String> forAnyDoubleSequence(List<Double> array) {
         double scale = Math.pow(10, 3);
         double maxP = 0;
         double maxM = 0;
@@ -27,12 +26,12 @@ public class KSCriterion implements Tester {
         double KnP = Math.ceil((Math.sqrt(size) * maxP) * scale) / scale;
         double KnM = Math.ceil((Math.sqrt(size) * maxM) * scale) / scale;
         // System.out.println("\nРезультат КС-Критерия: [Kn+ = " + KnP + ", Kn- = " + KnM + "]");
-        return new Pair<>(KnP, KnM);
+        return new Pair<>("Kn+: " + KnP, "Kn-" + KnM);
     }
 
     @NotNull
     @Override
-    public Pair<Double, Double> test(@NotNull Generator generator) {
+    public Pair<String, String> test(@NotNull Generator generator) {
         return forAnyDoubleSequence(
                 generator.generateDoubleSequence(Generator.DefaultValues.HOW_MANY_NUMBERS_GENERATE)
         );
