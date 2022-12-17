@@ -1,5 +1,6 @@
 package generator
 
+import java.math.BigInteger
 import kotlin.math.pow
 
 /**
@@ -8,7 +9,9 @@ import kotlin.math.pow
 class MidpointsOfSquares : Generator {
 
     companion object {
-        private const val GENERATED_NUMBER_MIN_LENGTH = 6L // допустимая (минимальная) длина числа
+        private val MOD = BigInteger.valueOf(
+            2.toDouble().pow(25).toLong()
+        )
     }
 
     override fun generateDoubleSequence(howManyDigitsNeedGenerate: Long): List<Double> {
@@ -17,75 +20,38 @@ class MidpointsOfSquares : Generator {
 
     override fun generateLongSequence(howManyDigitsNeedGenerate: Long): List<Long> {
         val result = mutableListOf<Long>() // Результирующий массив
-        var seed: Long = getSeed() // Начальное число
+        var seed: BigInteger = getSeed() // Начальное число
         var counter = 1 // Счетчик сгенерированных чисел
 
         while (howManyDigitsNeedGenerate > counter) {
-            if (result.isEmpty()) {
-                result.add(seed)  // Инициализируем массив
-            } else {
-                seed = seed.square() // Возводим в квадрат
-                seed =
-                    checkSeedLength(seed) // Проверяем минимально допустимую длину и если длина меньше, возводим в квадрат еще раз
-                val fromIndex: Int = ((seed.length() - GENERATED_NUMBER_MIN_LENGTH) / 2).toInt()
-                var generatedNumber = seed.toString()
-                    .subSequence(fromIndex, seed.length() - 1)
-                    .take(GENERATED_NUMBER_MIN_LENGTH.toInt())
-                    .toString()
-                    .toLong()
-
-                while (generatedNumber.length() < GENERATED_NUMBER_MIN_LENGTH) {
-                    generatedNumber = checkSeedLength(generatedNumber)
-                }
-
-                seed = generatedNumber
-                result.add(generatedNumber)
-            }
-
+            val generatedNumber = ((seed.multiply(seed.add(BigInteger.valueOf(1)))).mod(MOD))
+            seed = generatedNumber
+            result.add(generatedNumber.toLong())
             counter++
         }
 
-        return result
+        return result.also { it.printSequence() }
     }
 
-    /**
-     * Провряем длину числа и возводим в квадрат еще раз, если длина меньше, обрезваем в ином случае
-     */
-    private fun checkSeedLength(seed: Long, mingLength: Long = GENERATED_NUMBER_MIN_LENGTH): Long {
-        var rightSeed = seed
-
-        if (seed.length() < mingLength) {
-            rightSeed = seed.square()
-        } else if (seed.length() > mingLength) {
-            rightSeed = rightSeed
-                .toString()
-                .subSequence(0, mingLength.toInt() - 1)
-                .toString()
-                .toLong()
-        }
-
-        return rightSeed
-    }
+    private fun List<Long>.printSequence() =
+        println("Sequence: $this")
 
     /**
      * Получение начального числа (seed)
      */
-    private fun getSeed(seedLength: Long = GENERATED_NUMBER_MIN_LENGTH): Long {
-        return System.currentTimeMillis()
-            .toString()
-            .subSequence(0, seedLength.toInt() - 1)
-            .toString()
-            .replaceFirst("0", "7") // Если первое цифра "0", заменяем ее на "7"
-            .toLong()
+    private fun getSeed() =
+        findSeedWithParams(System.currentTimeMillis())
+
+    /**
+     * Подбор нужного начального числа, исходя из параметров
+     * @return resultSeed = [initialSeed] сравним с [reminderOfDivision] по модулю [mod]
+     */
+    private fun findSeedWithParams(initialSeed: Long, mod: Long = 4, reminderOfDivision: Long = 2): BigInteger {
+        var resultSeed = BigInteger.valueOf(initialSeed)
+        while (!resultSeed.mod(BigInteger.valueOf(mod))
+                .equals(BigInteger.valueOf(reminderOfDivision))) {
+            resultSeed = resultSeed.inc()
+        }
+        return resultSeed
     }
-
-    /**
-     * Возведение в квадрат
-     */
-    private fun Long.square() = this.toDouble().pow(2).toLong()
-
-    /**
-     * Получение количества цифр в числе
-     */
-    private fun Long.length() = this.toString().length
 }

@@ -1,17 +1,20 @@
 package generator;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
-public class Task5 {
+public class Task5 implements Generator {
 
     static final long p = 524287;
     static long c;
 
     //Основная функция по генерации чисел (Обратная линейная конгруэнтная последовательность):
-    public static List<Long> generate(int count) {
+    public static List<Long> generate(long count) {
         List<Long> result = new ArrayList<>();
         long a = LKG(0);
         c = LKG(1);
@@ -83,5 +86,20 @@ public class Task5 {
             array.add(res);
         }
         return array.get(indexOfResultArray);
+    }
+
+    @NotNull
+    @Override
+    public List<Double> generateDoubleSequence(long howManyDigitsNeedGenerate) {
+        return generate(howManyDigitsNeedGenerate)
+                .stream()
+                .map(Double::valueOf)
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    @Override
+    public List<Long> generateLongSequence(long howManyDigitsNeedGenerate) {
+        return generate(howManyDigitsNeedGenerate);
     }
 }

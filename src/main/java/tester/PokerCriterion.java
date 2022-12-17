@@ -1,25 +1,23 @@
 package tester;
 
-import generator.Task2;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class PokerCriterion {
-    public static void main(String[] args) {
 
-        List<Long> array = Task2.generate(1000);
+    public static void main(String[] args) {
+        List<Long> array = new ArrayList<>(); // generate here
         List<Long> block = new ArrayList<>();
         List<List<Long>> blocks = new ArrayList<>();
-        int[] counter = {0,0,0,0,0};
+        int[] counter = {0, 0, 0, 0, 0};
         int d = 10;
         int R = 5;
 
 
         int tmpCounter = 1;
         for (Long x : array) {
-            block.add(x%d);
+            block.add(x % d);
             if (tmpCounter % R == 0) {
                 blocks.add(List.copyOf(block));
                 block.clear();
@@ -59,20 +57,19 @@ public class PokerCriterion {
         System.out.println("\nПодсчёт количества различных элементов: " + Arrays.toString(counter));
 
         double[] Ps = new double[6];
-        Ps[0]=0;
+        Ps[0] = 0;
 
-        for(int r = 1; r<6; r++) {
-            int chisltel = d*(d-1);
-                for (int k = 2; k < r + 2; k++) {
-                    if(d-k > d-r+1) {
-                        chisltel *= (d - k);
-                    }
-                    else {
-                        chisltel *= (d - r + 1);
-                        break;
-                    }
+        for (int r = 1; r < 6; r++) {
+            int chisltel = d * (d - 1);
+            for (int k = 2; k < r + 2; k++) {
+                if (d - k > d - r + 1) {
+                    chisltel *= (d - k);
+                } else {
+                    chisltel *= (d - r + 1);
+                    break;
                 }
-            Ps[r] = chisltel* StirlingNumbersCriterion.func(5,r)/Math.pow(d,5);
+            }
+            Ps[r] = chisltel * StirlingNumbersCriterion.func(5, r) / Math.pow(d, 5);
         }
         System.out.println("\nВероятности: " + Arrays.toString(Ps));
         List<Integer> finalArray = new ArrayList<>();

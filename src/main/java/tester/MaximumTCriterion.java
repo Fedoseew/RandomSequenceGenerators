@@ -46,6 +46,7 @@ public class MaximumTCriterion {
         maximumsInBlocks.sort(Double::compareTo);
         System.out.println("\nМассив блоков длины " + t + ": " + Arrays.toString(blocks.toArray()));
         System.out.println("\nМаксимальные значения в блоках: " + maximumsInBlocks);
-        KSCriterion.forAnyDoubleSequence(maximumsInBlocks);
+
+        // KSCriterion.forAnyDoubleSequence(maximumsInBlocks);
     }
 }

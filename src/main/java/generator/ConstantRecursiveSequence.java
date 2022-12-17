@@ -1,13 +1,19 @@
 package generator;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-/*
-Генератор псевдослучайных чисел на основе Линейных рекуррентных последовательностей
-*/
-public class ConstantRecursiveSequence {
+/**
+ * Генератор псевдослучайных чисел на основе Линейных рекуррентных последовательностей
+ */
+@SuppressWarnings("SameParameterValue")
+public class ConstantRecursiveSequence implements Generator {
+
     private static final int p = 997; // Большое простое число
     private static final int k = 4; // Число иксов в последовательности
     private static final ArrayList<Integer> primeRoots = generatePRoots(); // Первообразные корни
@@ -15,26 +21,35 @@ public class ConstantRecursiveSequence {
     private static ArrayList<Long> x; // Первоначальные x (k штук)
     private static ArrayList<Integer> a; // Первоначальные а (k штук)
 
-    public static ArrayList<Long> generateSequence() {
+    public static ArrayList<Long> generateSequence(long count) {
         createAllX(); // Создаём элементы x;
         createAllA(); // Создаём элементы а;
-        return generateAllNumbers();
+        return generateAllNumbers(count);
     }
 
-    private static void createAllX() { // Метод создаёт и записывает k штук "х" из элементов порядка p-1
+    /**
+     * Метод создаёт и записывает k штук "х" из элементов порядка p-1
+     */
+    private static void createAllX() {
         x = new ArrayList<>();
         for (int i = 0; i < ConstantRecursiveSequence.k; i++) {
             x.add(Long.valueOf(primeRoots.get(i)));
         }
     }
 
-    private static void createAllA() { // Метод создаёт и записывает k штук "а" из первообразных корней mod p
+    /**
+     * Метод создаёт и записывает k штук "а" из первообразных корней mod p
+     */
+    private static void createAllA() {
         a = new ArrayList<>();
         for (int i = 0; i < ConstantRecursiveSequence.k; i++)
             a.add(ordPMinusOne.get(ordPMinusOne.size() - 6 + i));
     }
 
-    private static ArrayList<Integer> generatePRoots() { // Метод для поиска и записи всех первообразных корней
+    /**
+     * Метод для поиска и записи всех первообразных корней
+     */
+    private static ArrayList<Integer> generatePRoots() {
         ArrayList<Integer> res = new ArrayList<>();
         for (int i = 0; i < p; i++) {
             if (isPRoot(i))
@@ -43,7 +58,10 @@ public class ConstantRecursiveSequence {
         return res;
     }
 
-    private static boolean isPRoot(long a) { // Прроверка числа на принадлежность к группе первообразных кореней
+    /**
+     * Проверка числа на принадлежность к группе первообразных корней
+     */
+    private static boolean isPRoot(long a) {
         if (a == 0 || a == 1)
             return false;
         long last = 1;
@@ -58,7 +76,10 @@ public class ConstantRecursiveSequence {
         return true;
     }
 
-    private static int generateRandomNumber() { // Сгенерировать следующий член последовательности
+    /**
+     * Сгенерировать следующий член последовательности
+     */
+    private static int generateRandomNumber() {
         int number = 0;
         for (int i = 0; i < k; i++) {
             number += x.get(i) * a.get(i);
@@ -69,7 +90,10 @@ public class ConstantRecursiveSequence {
         return number;
     }
 
-    public static ArrayList<Integer> findBaseOfOrd(int q) { // Найти все элементы конкретного порядка
+    /**
+     * Найти все элементы конкретного порядка
+     */
+    public static ArrayList<Integer> findBaseOfOrd(int q) {
         ArrayList<Integer> res = new ArrayList<>();
         for (int i = 2; i < p; i++) {
             double temp = powP(i, q);
@@ -80,7 +104,10 @@ public class ConstantRecursiveSequence {
         return res;
     }
 
-    protected static double powP(double base, double exponent) { // Возведение в степень по модулю (p)
+    /**
+     * Возведение в степень по модулю (p)
+     */
+    protected static double powP(double base, double exponent) {
         double result = 1;
         for (int i = 0; i < exponent; i++) {
             result *= base;
@@ -89,16 +116,21 @@ public class ConstantRecursiveSequence {
         return result % p;
     }
 
-    private static ArrayList<Long> generateAllNumbers() {
+    private static ArrayList<Long> generateAllNumbers(long howManyDigitsNeedGenerate) {
         ArrayList<Long> allNumbers = new ArrayList<>(x);
         while (true) {
             long x1 = generateRandomNumber();
             long x2 = generateRandomNumber();
             long x3 = generateRandomNumber();
             long x4 = generateRandomNumber();
-            if (x1 == allNumbers.get(0) && x2 == allNumbers.get(1) && x3 == allNumbers.get(2) && x4 == allNumbers.get(3))
+            if (howManyDigitsNeedGenerate == allNumbers.size()) {
                 break;
-            else {
+            } else if (x1 == allNumbers.get(0)
+                    && x2 == allNumbers.get(1)
+                    && x3 == allNumbers.get(2)
+                    && x4 == allNumbers.get(3)) {
+                break;
+            } else {
                 allNumbers.add(x1);
                 allNumbers.add(x2);
                 allNumbers.add(x3);
@@ -106,5 +138,20 @@ public class ConstantRecursiveSequence {
             }
         }
         return allNumbers;
+    }
+
+    @NotNull
+    @Override
+    public List<Double> generateDoubleSequence(long howManyDigitsNeedGenerate) {
+        return generateLongSequence(howManyDigitsNeedGenerate)
+                .stream()
+                .map(Long::doubleValue)
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    @Override
+    public List<Long> generateLongSequence(long howManyDigitsNeedGenerate) {
+        return generateSequence(howManyDigitsNeedGenerate);
     }
 }

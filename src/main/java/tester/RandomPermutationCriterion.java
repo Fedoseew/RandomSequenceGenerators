@@ -6,6 +6,7 @@ package tester;
 
 import generator.ConstantRecursiveSequence;
 import generator.DropTheMembersOfSequence;
+import generator.Generator;
 import generator.MixingSequence;
 import org.apache.commons.collections4.ListUtils;
 
@@ -14,7 +15,12 @@ import java.util.*;
 public class RandomPermutationCriterion {
 
     public static List<Long> sequence = DropTheMembersOfSequence.generateSequence(
-            MixingSequence.mixSequence(ConstantRecursiveSequence.generateSequence().subList(0, 30000)));
+            MixingSequence.mixSequence(
+                    ConstantRecursiveSequence
+                            .generateSequence(Generator.DefaultValues.HOW_MANY_NUMBERS_GENERATE)
+                            .subList(0, 30000)
+            )
+    );
     public static int blocksSize = 3;
 
     public static void main(String[] args) {

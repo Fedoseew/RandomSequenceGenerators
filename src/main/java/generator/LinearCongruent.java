@@ -1,12 +1,18 @@
 package generator;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class LinearCongruent {
+/**
+ * Линейный конгруэнтный генератор
+ */
+public class LinearCongruent implements Generator {
 
     //создаем последовательность по формуле
-    public static List<Long> generate(int count) {
+    public static List<Long> generate(long count) {
         ArrayList<Long> array = new ArrayList<>();
         double m = Math.pow(2, 35);
         double b = Math.pow(2, 23) + Math.pow(2, 13) + Math.pow(2, 2);
@@ -32,4 +38,18 @@ public class LinearCongruent {
         return s;
     }
 
+    @NotNull
+    @Override
+    public List<Double> generateDoubleSequence(long howManyDigitsNeedGenerate) {
+        return generate(howManyDigitsNeedGenerate)
+                .stream()
+                .map(Double::valueOf)
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    @Override
+    public List<Long> generateLongSequence(long howManyDigitsNeedGenerate) {
+        return generate(howManyDigitsNeedGenerate);
+    }
 }
