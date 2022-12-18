@@ -11,7 +11,7 @@ import java.util.TreeMap;
 
 import static generator.Generator.DefaultValues.HOW_MANY_NUMBERS_GENERATE;
 
-@SuppressWarnings({"OptionalGetWithoutIsPresent" , "MismatchedQueryAndUpdateOfCollection"})
+@SuppressWarnings({"OptionalGetWithoutIsPresent", "MismatchedQueryAndUpdateOfCollection"})
 public class IntervalCriterion implements Tester {
 
     @NotNull
@@ -31,6 +31,7 @@ public class IntervalCriterion implements Tester {
         double alpha = 0; // начальное значение интервала
         double betta = 1d / 2d; // конечное значение интервала
         int t = 3; // максимальная длина подходящего интервала
+        int n = calculateAmountOfIntervals(betta - alpha, t);
 
         // пары вида: <индекс_в_последовательности, само_число>, где число попало в заданный интервал [alpha, betta]
         Map<Integer, Double> suitableElements = new TreeMap<>();
@@ -44,69 +45,90 @@ public class IntervalCriterion implements Tester {
         List<Integer> count_r = new ArrayList<>();
         List<Integer> count_t = new ArrayList<>();
 
-        final int[] prevIndex = new int[]{ // инициализируем как самый первый индекс
+        // инициализируем как самый первый индекс числа, лежащего в отрезке (alpha, betta)
+        final int[] prevIndex = new int[]{
                 suitableElements.keySet()
                         .stream()
                         .findFirst()
                         .get()
         };
 
-        suitableElements.forEach((index, number) -> {
-            if (index != prevIndex[0]) {
+        final boolean[] firstIteration = new boolean[]{true}; // самый первый проход по циклу
+        for (Map.Entry<Integer, Double> entry : suitableElements.entrySet()) {
+            if (count_t.size() + count_r.size() == n) { // если набралось n интервалов, то выходим
+                break;
+            }
+
+            Integer index = entry.getKey();
+
+            // если первое число, лежащие в отрезке (alpha, betta) находится не на 0 индексе
+            if (firstIteration[0] && prevIndex[0] != 0) {
+                int interval = prevIndex[0];
+                if (interval < t) { // если интервал меньше, чем заданное t
+                    count_r.add(interval);
+                } else {
+                    count_t.add(interval);
+                }
+            } else if (index != prevIndex[0]) {
                 int interval = (index - prevIndex[0]) - 1; // разница индекса и предыдущего индекса
-                if (interval <= t) { // если интервал не больше, чем заданное t
+                if (interval < t) { // если интервал меньше, чем заданное t
                     count_r.add(interval);
                 } else {
                     count_t.add(interval);
                 }
                 prevIndex[0] = index;
             }
-        });
 
-        return applyX2Criterion(count_r, alpha, betta);
+            firstIteration[0] = false;
+        }
+
+        return applyX2Criterion(count_r, count_t, alpha, betta, t);
     }
 
     @SuppressWarnings("DuplicatedCode")
-    private double applyX2Criterion(List<Integer> count_r, double alpha, double betta) {
+    private String applyX2Criterion(List<Integer> count_r, List<Integer> count_t, double alpha, double betta, int t) {
         // Пары вида <интервал, сколько_раз_встретился>
         Map<Integer, Integer> countOfOccurrences = new TreeMap<>();
         count_r.forEach(it -> {
             Integer currentValue = countOfOccurrences.get(it);
             if (currentValue == null) {
-                countOfOccurrences.put(it, 1);
+                countOfOccurrences.put(it, 1); // если интервал встретился впервые
             } else {
-                countOfOccurrences.put(it, ++currentValue);
+                countOfOccurrences.put(it, ++currentValue); // если уже встречался, увеличиваем количество встреч на 1
             }
         });
 
         double v = 0;
         double p = betta - alpha;
-        double amountOfIntervals = calculateAmountOfIntervals(countOfOccurrences, p);
+        double amountOfIntervals = calculateAmountOfIntervals(p, t);
 
         for (Map.Entry<Integer, Integer> element : countOfOccurrences.entrySet()) {
-            // (1 - p)^r * p
-            double Pr = Math.pow((1 - p), element.getKey()) * p;
-            double amountOfIntervals_Pr = amountOfIntervals * Pr; // ожидаемое количество раз встречи интервала
-            double Yr = element.getValue(); // сколько раз встретился интервал на самом деле
-            double Yr_minus_nPr = Yr - amountOfIntervals_Pr;
-            double square = Math.pow(Yr_minus_nPr, 2);
-            double statElement = square / amountOfIntervals_Pr;
-            v += statElement;
+            Integer interval = element.getKey();
+            if (interval < t) {
+                double Pr = Math.pow((1 - p), interval) * p;
+                double amountOfIntervals_Pr = amountOfIntervals * Pr; // ожидаемое количество раз встречи интервала
+                double Yr = element.getValue(); // сколько раз встретился интервал на самом деле
+                double Yr_minus_nPr = Yr - amountOfIntervals_Pr;
+                double square = Math.pow(Yr_minus_nPr, 2);
+                double statElement = square / amountOfIntervals_Pr;
+                v += statElement;
+            } else {
+                double Pt = Math.pow((1 - p), t);
+                double amountOfIntervals_Pt = amountOfIntervals * Pt;
+                double Yt = count_t.size();
+                double Yt_minus_nPt = Yt - amountOfIntervals_Pt;
+                double square = Math.pow(Yt_minus_nPt, 2);
+                double statElement = square / amountOfIntervals_Pt;
+                v += statElement;
+                break; // вычисляем только один раз для Pt и выходим из цикла
+            }
         }
 
-        return v;
+        return "for nyu = " + t + ", V = " + v;
     }
 
-    private int calculateAmountOfIntervals(Map<Integer, Integer> countOfOccurrences, double p) {
-        List<Double> Pr_Array = new ArrayList<>();
-        for (Map.Entry<Integer, Integer> element : countOfOccurrences.entrySet()) {
-            Pr_Array.add(
-                    // (1 - p)^r * p
-                    Math.pow((1 - p), element.getKey()) * p
-            );
-        }
-
-        Double minPr = Collections.min(Pr_Array);
-        return (int) Math.ceil(5 / minPr) * 2;
+    private int calculateAmountOfIntervals(double p, int t) {
+        double Pt = Math.pow((1 - p), t);
+        return (int) Math.ceil(5 / Pt);
     }
 }

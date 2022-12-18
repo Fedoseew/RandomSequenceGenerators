@@ -9,15 +9,15 @@ import java.util.List;
 
 public class KSCriterion implements Tester {
 
-    public static Pair<String, String> doTest(List<Long> sequence) {
+    public static String doTest(List<Long> sequence) {
         Collections.sort(sequence); // упорядочиваем последовательность
 
         long m = sequence.get(sequence.size() - 1) + 1;
         int size = sequence.size();
-        double n = Math.min(size, 15); // проверяем не более 20 чисел
+        double n = Math.min(size, 15); // проверяем не более 15 чисел
 
-        double maxP = Integer.MIN_VALUE;
-        double maxM = Integer.MIN_VALUE;
+        double maxP = Double.MIN_VALUE;
+        double maxM = Double.MIN_VALUE;
 
         for (int j = 0; j < n; j++) {
             double currentElement = (double) sequence.get(j) / m; // приводим число к интервалу (0, 1)
@@ -36,12 +36,12 @@ public class KSCriterion implements Tester {
         double KnP = (Math.sqrt(n) * maxP);
         double KnM = (Math.sqrt(n) * maxM);
 
-        return new Pair<>("Kn+: " + KnP, "Kn-: " + KnM);
+        return "for n = " + n + " (Kn+: " + KnP + ", Kn-: " + KnM + ")";
     }
 
     @NotNull
     @Override
-    public Pair<String, String> test(@NotNull Generator generator) {
+    public String test(@NotNull Generator generator) {
         return doTest(
                 generator.generateLongSequence(Generator.DefaultValues.HOW_MANY_NUMBERS_GENERATE)
         );

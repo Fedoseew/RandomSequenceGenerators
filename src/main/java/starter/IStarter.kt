@@ -22,7 +22,7 @@ interface IStarter {
             "Result for" +
                     " generator [" + generator::class.java.name + "]" +
                     " and tester [" + tester::class.java.name + "]" +
-                    " is " + testSequence(tester, generator)
+                    " is " + testSequence(tester, generator) + "\n"
         )
     }
 

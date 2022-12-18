@@ -30,7 +30,7 @@ public class X2Criterion implements Tester {
     /**
      * Метод для подсчёта статистики V
      */
-    private static double getTestValue(Map<Long, Integer> countOfOccurrences, List<Long> sequence) {
+    private static String getTestValue(Map<Long, Integer> countOfOccurrences, List<Long> sequence) {
         int n = sequence.size();
         double v = 0;
         double Ps = 1.0 / countOfOccurrences.size(); // 1/k
@@ -45,17 +45,17 @@ public class X2Criterion implements Tester {
             v += statElement; // Инкриминируем наше V
         }
 
-        return v;
+        return "for nyu = " + (K - 1) + ", V = " + v;
     }
 
-    public static double doTest(List<Long> sequence) {
+    public static String doTest(List<Long> sequence) {
         Map<Long, Integer> countOccurrences = countOccurrences(K, sequence);
         return getTestValue(countOccurrences, sequence);
     }
 
     @NotNull
     @Override
-    public Double test(@NotNull Generator generator) {
+    public String test(@NotNull Generator generator) {
         List<Long> sequence = generator.generateLongSequence(Generator.DefaultValues.HOW_MANY_NUMBERS_GENERATE);
         return doTest(sequence);
     }
