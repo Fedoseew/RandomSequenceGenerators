@@ -28,6 +28,8 @@ public class IntervalCriterion implements Tester {
                 .map(it -> (double) it / m)
                 .toList();
 
+        System.out.println("Changed sequence: " + changedSequence);
+
         double alpha = 0; // начальное значение интервала
         double betta = 1d / 2d; // конечное значение интервала
         int t = 3; // максимальная длина подходящего интервала

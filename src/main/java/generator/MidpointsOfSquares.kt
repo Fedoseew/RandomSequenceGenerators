@@ -24,6 +24,7 @@ class MidpointsOfSquares : Generator {
         var counter = 1 // Счетчик сгенерированных чисел
 
         while (howManyDigitsNeedGenerate > counter) {
+            // (seed * (seed + 1)) % MOD
             val generatedNumber = ((seed.multiply(seed.add(BigInteger.valueOf(1)))).mod(MOD))
             seed = generatedNumber
             result.add(generatedNumber.toLong())

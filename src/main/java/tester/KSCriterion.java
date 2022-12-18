@@ -19,8 +19,12 @@ public class KSCriterion implements Tester {
         double maxP = Double.MIN_VALUE;
         double maxM = Double.MIN_VALUE;
 
+        StringBuilder sequenceBuilder = new StringBuilder();
+
         for (int j = 0; j < n; j++) {
             double currentElement = (double) sequence.get(j) / m; // приводим число к интервалу (0, 1)
+
+            sequenceBuilder.append(currentElement).append(", "); // для вывода тестируемой последовательности
 
             double KnP_Value = (double) j / n - currentElement;
             if (KnP_Value > maxP) {
@@ -36,6 +40,7 @@ public class KSCriterion implements Tester {
         double KnP = (Math.sqrt(n) * maxP);
         double KnM = (Math.sqrt(n) * maxM);
 
+        System.out.println("Changed sequence: " + sequenceBuilder);
         return "for n = " + n + " (Kn+: " + KnP + ", Kn-: " + KnM + ")";
     }
 
