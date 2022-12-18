@@ -97,7 +97,7 @@ public class IntervalCriterion implements Tester {
         return v;
     }
 
-    private double calculateAmountOfIntervals(Map<Integer, Integer> countOfOccurrences, double p) {
+    private int calculateAmountOfIntervals(Map<Integer, Integer> countOfOccurrences, double p) {
         List<Double> Pr_Array = new ArrayList<>();
         for (Map.Entry<Integer, Integer> element : countOfOccurrences.entrySet()) {
             Pr_Array.add(
@@ -105,7 +105,8 @@ public class IntervalCriterion implements Tester {
                     Math.pow((1 - p), element.getKey()) * p
             );
         }
+
         Double minPr = Collections.min(Pr_Array);
-        return 5 / minPr;
+        return (int) Math.ceil(5 / minPr) * 2;
     }
 }
